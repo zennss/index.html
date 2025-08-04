@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Information</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .info {
+            padding: 20px;
+            background-color: #222;
+            border-radius: 10px;
+            margin-top: 30px;
+            display: inline-block;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #e74c3c;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        .details {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .details p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to Device Info Page</h1>
+    <div id="device-info" class="info">
+        <p>Loading your device information...</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+    <script>
+        // Use an IP Info API to get device information
+        axios.get('https://ipinfo.io/json?token=YOUR_API_KEY')
+            .then(function (response) {
+                const data = response.data;
+
+                // Get current date and time
+                const now = new Date();
+                const currentDate = now.toLocaleDateString();
+                const currentTime = now.toLocaleTimeString();
+                const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+                // Set the device information in the HTML
+                const info = `
+                    <h2>Device Information</h2>
+                    <div class="details">
+                        <p><strong>IP Address:</strong> ${data.ip}</p>
+                        <p><strong>Location:</strong> ${data.city}, ${data.region}, ${data.country}</p>
+                        <p><strong>Time:</strong> ${currentTime}</p>
+                        <p><strong>Date:</strong> ${currentDate}</p>
+                        <p><strong>Timezone:</strong> ${timeZone}</p>
+                        <p><strong>Latitude:</strong> ${data.loc.split(',')[0]}</p>
+                        <p><strong>Longitude:</strong> ${data.loc.split(',')[1]}</p>
+                        <p><strong>Browser:</strong> ${navigator.userAgent}</p>
+                        <p><strong>Platform:</strong> ${navigator.platform}</p>
+                    </div>
+                `;
+
+                document.getElementById('device-info').innerHTML = info;
+            })
+            .catch(function (error) {
+                console.log('Error fetching IP info:', error);
+                document.getElementById('device-info').innerHTML = '<p>Sorry, we couldn\'t fetch device information at the moment.</p>';
+            });
+    </script>
+</body>
+</html>
