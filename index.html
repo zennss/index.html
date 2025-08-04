@@ -30,9 +30,9 @@
             display: inline-block;
             border-right: 2px solid white;
             padding-right: 5px;
-            white-space: nowrap;
+            white-space: pre-line; /* To support new lines */
             overflow: hidden;
-            animation: typing 1s steps(50) 1s forwards, blink 0.75s step-end infinite;
+            animation: typing 0.25s steps(50) 1s forwards, blink 0.75s step-end infinite;
         }
 
         /* Typing animation */
@@ -93,9 +93,9 @@
                     const browser = navigator.userAgent;
                     const platform = navigator.platform;
 
-                    // Build the text string to display
+                    // Build the text string to display with line breaks (\n)
                     const deviceInfo = `
-                        IP: ${ip} 
+                        IP: ${ip}
                         Location: ${city}, ${region}, ${country}
                         Time: ${formattedTime}
                         Date: ${formattedDate}
@@ -118,7 +118,7 @@
             let i = 0;
             const typingElement = document.getElementById('device-details');
             typingElement.innerHTML = ''; // Clear the existing text
-            const typingSpeed = 50; // Adjust typing speed here (lower value = faster typing)
+            const typingSpeed = 12; // Speed up typing (reduce by 75%)
 
             function type() {
                 if (i < text.length) {
