@@ -5,84 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Device Information</title>
     <style>
+        /* General body styles */
         body {
             background-color: black;
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: 'Courier New', Courier, monospace;
             text-align: center;
             margin-top: 50px;
         }
 
-        .info {
-            padding: 20px;
-            background-color: #222;
-            border-radius: 10px;
-            margin-top: 30px;
-            display: inline-block;
-            max-width: 600px;
-            width: 100%;
-        }
-
+        /* Neon glowing effect for INFO */
         h1 {
+            font-size: 4rem;
             color: #e74c3c;
+            text-shadow: 0 0 10px #e74c3c, 0 0 20px #e74c3c, 0 0 30px #e74c3c, 0 0 40px #e74c3c;
         }
 
-        p {
-            font-size: 18px;
+        /* Glowing effect for all text */
+        .glow {
+            color: white;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #fff;
         }
 
-        .details {
-            margin-top: 20px;
+        /* Speed of typing effect */
+        .typing {
+            display: inline-block;
+            border-right: 2px solid white;
+            padding-right: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 1s steps(50) 1s forwards, blink 0.75s step-end infinite;
+        }
+
+        /* Typing animation */
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+            50% {
+                border-color: transparent;
+            }
+        }
+
+        /* Container for device info */
+        #device-info {
+            font-size: 1.5rem;
+            margin-top: 30px;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
             text-align: left;
-        }
-
-        .details p {
-            margin: 5px 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            width: 90%;
+            max-width: 600px;
         }
     </style>
 </head>
 <body>
 
-    <h1>Welcome to Device Info Page</h1>
-    <div id="device-info" class="info">
-        <p>Loading your device information...</p>
+    <h1 class="glow">INFO</h1>
+
+    <div id="device-info">
+        <div class="typing" id="device-details">Loading device info...</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script>
-        // Use an IP Info API to get device information
-        axios.get('https://ipinfo.io/json?token=YOUR_API_KEY')
-            .then(function (response) {
-                const data = response.data;
+        // Function to fetch device information
+        function fetchDeviceInfo() {
+            // Using ip-api to avoid CORS issues
+            axios.get('http://ip-api.com/json')
+                .then(function(response) {
+                    const data = response.data;
 
-                // Get current date and time
-                const now = new Date();
-                const currentDate = now.toLocaleDateString();
-                const currentTime = now.toLocaleTimeString();
-                const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    const now = new Date();
+                    const currentDate = now.toLocaleDateString();
+                    const currentTime = now.toLocaleTimeString();
+                    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-                // Set the device information in the HTML
-                const info = `
-                    <h2>Device Information</h2>
-                    <div class="details">
-                        <p><strong>IP Address:</strong> ${data.ip}</p>
-                        <p><strong>Location:</strong> ${data.city}, ${data.region}, ${data.country}</p>
-                        <p><strong>Time:</strong> ${currentTime}</p>
-                        <p><strong>Date:</strong> ${currentDate}</p>
-                        <p><strong>Timezone:</strong> ${timeZone}</p>
-                        <p><strong>Latitude:</strong> ${data.loc.split(',')[0]}</p>
-                        <p><strong>Longitude:</strong> ${data.loc.split(',')[1]}</p>
-                        <p><strong>Browser:</strong> ${navigator.userAgent}</p>
-                        <p><strong>Platform:</strong> ${navigator.platform}</p>
-                    </div>
-                `;
+                    // Build the text string
+                    const deviceInfo = `
+                        IP: ${data.query} 
+                        Location: ${data.city}, ${data.regionName}, ${data.country} 
+                        Time: ${currentTime} 
+                        Date: ${currentDate} 
+                        Timezone: ${timeZone} 
+                        Latitude: ${data.lat} 
+                        Longitude: ${data.lon} 
+                        IPv4: ${data.query} 
+                        IPv6: ${data.ipv6 ? data.ipv6 : 'N/A'} 
+                        Browser: ${navigator.userAgent} 
+                        Platform: ${navigator.platform} 
+                    `;
 
-                document.getElementById('device-info').innerHTML = info;
-            })
-            .catch(function (error) {
-                console.log('Error fetching IP info:', error);
-                document.getElementById('device-info').innerHTML = '<p>Sorry, we couldn\'t fetch device information at the moment.</p>';
-            });
+                    // Start the typing animation
+                    typeText(deviceInfo);
+                })
+                .catch(function(error) {
+                    console.log('Error fetching IP info:', error);
+                    document.getElementById('device-details').innerHTML = 'Sorry, we couldn\'t fetch device information at the moment.';
+                });
+        }
+
+        // Function to simulate typing effect
+        function typeText(text) {
+            let i = 0;
+            const typingElement = document.getElementById('device-details');
+            typingElement.innerHTML = ''; // Clear the existing text
+            const typingSpeed = 50; // Adjust typing speed here (lower value = faster typing)
+
+            function type() {
+                if (i < text.length) {
+                    typingElement.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, typingSpeed);
+                }
+            }
+
+            type();
+        }
+
+        // Fetch device info when the page loads
+        fetchDeviceInfo();
     </script>
 </body>
 </html>
