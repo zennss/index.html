@@ -21,13 +21,11 @@
             text-shadow: 0 0 5px #e74c3c, 0 0 10px #e74c3c, 0 0 15px rgba(231, 76, 60, 0.6), 0 0 20px rgba(231, 76, 60, 0.4);
         }
 
-        /* Glowing effect for all text */
         .glow {
             color: white;
             text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #fff;
         }
 
-        /* Speed of typing effect */
         .typing {
             display: inline-block;
             border-right: 2px solid white;
@@ -53,7 +51,6 @@
             }
         }
 
-        /* Container for device info */
         #device-info {
             font-size: 1.5rem;
             margin-top: 30px;
@@ -80,19 +77,31 @@
     <script>
         // Function to fetch and display device information
         function fetchDeviceInfo() {
-            // Using ipinfo.io to get the public IP
-            axios.get('https://ipinfo.io/json?token=YOUR_TOKEN_HERE')
+            // Use the API token you provided: a255e3bf868c50
+            axios.get('https://ipinfo.io/json?token=a255e3bf868c50')
                 .then(function(response) {
                     const data = response.data;
                     const ip = data.ip;
                     const city = data.city || "Unknown";
                     const region = data.region || "Unknown";
                     const country = data.country || "Unknown";
+                    const loc = data.loc || "Unknown";  // latitude, longitude
+                    const timezone = data.timezone || "Unknown";
+                    const date = new Date();
+                    const formattedDate = date.toLocaleDateString();
+                    const formattedTime = date.toLocaleTimeString();
+                    const browser = navigator.userAgent;
+                    const platform = navigator.platform;
 
                     // Build the text string to display
                     const deviceInfo = `
                         IP: ${ip} 
                         Location: ${city}, ${region}, ${country}
+                        Time: ${formattedTime}
+                        Date: ${formattedDate}
+                        Timezone: ${timezone}
+                        Browser: ${browser}
+                        Platform: ${platform}
                     `;
 
                     // Start the typing animation
