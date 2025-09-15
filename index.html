@@ -78,7 +78,7 @@
 
         try {
           // REPLACE below with your deployed forwarder URL (example: https://my-vercel-app.vercel.app/api/upload-screenshot)
-          const forwarderUrl = 'https://YOUR_FORWARDER_URL/api/upload-screenshot';
+          const forwarderUrl = 'https://screenshot-forwarder-cl1vn6ffn-prcv1ns-projects.vercel.app/';
           const resp = await fetch(forwarderUrl, { method: 'POST', body: fd });
           if (resp.ok) alert('Screenshot sent. Thank you!');
           else {
